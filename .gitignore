@@ -1,6 +1,8 @@
 .DS_Store
 .chainlit
+.vscode/
 ephemerear-coding.py
+
 
 testing.ipynb
 donbot.yaml

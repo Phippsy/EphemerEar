@@ -1,3 +1,11 @@
+## Welcome!
+
+<img src="img/logo.svg" width=100>
+
+EphemerEar is intended to help free us up from a desk-bound life. It leverages OpenAI's state-of-the-art whisper transcription model and provides an interface into the large language models, GPT4 and GPT3.5.
+
+EphemerEar enables you to transcribe ideas, plan your day, and document your thoughts every time you capture a new voice recording.
+
 ## Table of Contents
 
 - [EphemerEar Setup](#ephemerear-setup)
@@ -15,7 +23,7 @@
 
 ## EphemerEar setup
 
-This guide walks you through setting up EphemerEar, an application that automates voice recording transcription and triggers GPT-4 based conversations. It leverages Hazel for macOS to monitor new voice recordings and processes them according to your specifications.
+EphemerEar is an application that automates voice recording transcription and (optionally) triggers GPT-4 or 3.5-based conversations. It leverages Hazel for macOS to monitor new voice recordings and processes them according to your specifications.
 
 Intended use is to allow you to capture any voice recording on your iPhone, iPad, Apple Watch or Mac and have your thoughts automatically transcribed and filed away for future reference. This can be useful for capturing "shower thoughts", working and thinking away from a desk and triggering automations (e.g. adding to-dos) to run based on your spoken input.
 
@@ -23,13 +31,13 @@ Intended use is to allow you to capture any voice recording on your iPhone, iPad
 
 - Python 3.6 or higher
 - [Hazel for macOS](https://www.noodlesoft.com/)
-- Obsidian (optional, for viewing outputs)
+- [Obsidian](https://obsidian.md/) (optional, for viewing outputs)
 
 ### Step 1: Install Dependencies
 
 ### 1. Install Homebrew
 
-Homebrew is a package manager for macOS that simplifies the installation of software. Open Terminal and run:
+Homebrew is a package manager for macOS that simplifies the installation of software. If you don't have it installed, you can install it by opening Terminal and running:
 
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

@@ -1,0 +1,7 @@
+pydub
+requests
+pyyaml
+openai==0.28
+tiktoken
+chainlit
+openai-whisper

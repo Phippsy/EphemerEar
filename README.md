@@ -51,7 +51,9 @@ For more information, refer to the [Homebrew and Python documentation](https://d
 
 #### 3. Create a GitHub Account and Download the Repository
 
-If you haven't already, create a GitHub account at [GitHub's website](https://github.com/). Once your account is set up, navigate to the `EphemerEar` repository page and download the repository. You can do this by clicking the `Code` button and then `Download ZIP`.
+If you haven't already, create a GitHub account at [GitHub's website](https://github.com/). Once your account is set up, navigate to the `EphemerEar` repository page and download the repository. You can do this by clicking the `Code` button and then `Download ZIP` (see screenshot, below).
+
+<img src="img/download_zip.png" width=400>
 
 #### 4. Choose a Suitable Location for the Repository
 
@@ -68,17 +70,21 @@ mkdir -p ~/Development
 Unzip the downloaded repository and move it to this new directory. You can use the Finder or the following Terminal command (adjust the command based on the name of the downloaded ZIP file):
 
 ```shell
-unzip `EphemerEar`-main.zip -d ~/Development
+unzip EphemerEar-main.zip -d ~/Development
 ```
 
-It's likely that the downloaded folder will include the suffix `-main` (the main branch of this repository). I recommend renaming the folder to simply `EphemerEar`.
+It's likely that the downloaded folder will include the suffix `-main` (the main branch of this repository). I recommend renaming the folder to simply `EphemerEar`. You can either do this in Finder, or using the terminal:
+
+```shell
+mv ~/Development/EphemerEar-main ~/Development/EphemerEar
+```
 
 ### 5. Create and Activate a Virtual Environment
 
 After installing Python, you can create a virtual environment using Python's built-in `venv` module. This step isolates your project's dependencies from those installed globally on your system. Navigate to the directory where you unzipped the `EphemerEar` files and open a terminal session in that directory. Run the following to activate your virtual environment:
 
 ```shell
-cd ~/Development/ephemerear
+cd ~/Development/EphemerEar
 python3 -m venv venv
 source venv/bin/activate
 ```

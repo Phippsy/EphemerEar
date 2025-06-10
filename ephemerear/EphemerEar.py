@@ -4,18 +4,25 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import tiktoken
 
 import ephemerear.functions
-import openai
-import requests
 import yaml
-from requests.exceptions import RequestException
 
-def count_tokens(text, encoding_name = 'p50k_base'):
+def count_tokens(text, encoding_name: str = 'p50k_base') -> int:
+    """Return the number of tokens in *text* for the given encoding.
+
+    ``tiktoken`` is an optional dependency and is imported lazily so that the
+    package can be used for functionality that doesn't require it.
+    """
+    try:
+        import tiktoken
+    except ModuleNotFoundError as exc:
+        raise ModuleNotFoundError(
+            "tiktoken is required for counting tokens"
+        ) from exc
+
     encoding = tiktoken.get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(text))
-    return num_tokens
+    return len(encoding.encode(text))
 
 def testforword(text, word, splitrange=15):
     import re
@@ -107,11 +114,12 @@ class EphemerEar:
             return json.load(file)
 
     def save_history(self, history: List[Dict[str, str]]) -> None:
-        for message in history:
-            if 'role' in message and message['role'] == 'system':
-                history.remove(message)
+        # Remove any system messages before persisting chat history. Modifying
+        # the list while iterating can lead to skipped items, so build a new
+        # list instead of calling ``list.remove`` in-place.
+        filtered_history = [m for m in history if m.get('role') != 'system']
         with self.history_file_path.open('w') as file:
-            json.dump(history, file)
+            json.dump(filtered_history, file)
 
     def send_pushover(self,
         title: str,
@@ -119,7 +127,11 @@ class EphemerEar:
         user_key: str,
         api_key: str,
         message_url: Optional[str] = None
-        ) -> requests.Response:
+        ):
+            # Lazy import so that the package can be used without the requests
+            # library installed when notifications are disabled.
+            import requests
+            from requests.exceptions import RequestException
             if not title:
                 raise ValueError("The title must not be empty.")
             if not user_key:
@@ -172,6 +184,13 @@ class EphemerEar:
         # Reverse back and add system message to the beginning
         non_system_messages.reverse()
         all_messages = [{"role": "system", "content": self.system_prompt}] + non_system_messages
+
+        try:
+            import openai
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "openai package is required for gpt_chat"
+            ) from exc
 
         completion = openai.ChatCompletion.create(
             model=model,

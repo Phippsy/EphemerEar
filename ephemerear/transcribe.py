@@ -105,8 +105,14 @@ def handle_transcript(transcript_text, transcript_output_dir, simplified_filenam
     transcript_filename = f"{simplified_filename}.md"
     transcript_path = os.path.join(transcript_output_dir, transcript_filename)
 
+    # Ensure that line breaks are respected when converting the markdown to
+    # other formats (e.g. ``docx``). ``pandoc`` and similar tools treat a single
+    # newline as a space, so we add two spaces before each newline to force a
+    # line break in the rendered output.
+    lines = transcript_text.splitlines()
     with open(transcript_path, 'w', encoding='utf-8') as transcript_file:
-        transcript_file.write(transcript_text)
+        for line in lines:
+            transcript_file.write(line.rstrip() + "  \n")
 
     print(f"Transcript written to {transcript_path}")
 

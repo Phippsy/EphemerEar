@@ -38,6 +38,7 @@ def test_add_todo_appends_to_file(setup_todo_environment):
 #### Testing `load_yaml_to_dict` Function
 
 from ephemerear.EphemerEar import EphemerEar
+from ephemerear.transcribe import handle_transcript
 
 def test_load_yaml_to_dict_returns_correct_structure(tmp_path):
     yaml_content = """
@@ -73,6 +74,16 @@ def test_load_yaml_to_dict_raises_error_on_invalid_path(tmp_path):
     ee = EphemerEar(str(yaml_file))
     with pytest.raises(FileNotFoundError):
         ee.load_yaml_to_dict("invalid_path.yaml")
+
+
+def test_handle_transcript_preserves_line_breaks(tmp_path):
+    transcript_dir = tmp_path
+    transcript_text = "00:00:00: SPEAKER_00: 'Hello'\n00:00:05: SPEAKER_01: 'Hi'"
+    simplified_filename = "sample"
+    handle_transcript(transcript_text, str(transcript_dir), simplified_filename, year_month_folders=False)
+    output_file = transcript_dir / f"{simplified_filename}.md"
+    content = output_file.read_text()
+    assert content == "00:00:00: SPEAKER_00: 'Hello'  \n00:00:05: SPEAKER_01: 'Hi'  \n"
         
 
 

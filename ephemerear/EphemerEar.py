@@ -155,7 +155,7 @@ class EphemerEar:
             except RequestException as e:
                 raise RequestException(f"Failed to send the message: {e}")
             
-    def gpt_chat(self, message: str, model: str = "gpt-3.5-turbo-16k", max_tokens: int = 800, notify: bool = True, available_functions: dict = None) -> str:
+    def gpt_chat(self, message: str, model: str = "gpt-4o-mini", max_tokens: int = 800, notify: bool = True, available_functions: dict = None) -> str:
         history = self.get_history()
         model = self.model
         notify = self.notify
@@ -164,60 +164,49 @@ class EphemerEar:
         if available_functions is None:
             available_functions = self.functions_definitions["functions"]
 
-
         max_message_window = self.config['bot']['max_message_window']
 
-        # Filter to exclude system messages and reverse the list to start from the oldest
         non_system_messages = list(filter(lambda m: m['role'] != 'system', messages))
         non_system_messages.reverse()
 
-        # Compute the token count and remove messages if necessary
         running_token_count = 0
         for m in non_system_messages:
             token_count = count_tokens(m['content'])
             if running_token_count + token_count > max_message_window:
-                # When limit is exceeded, continue removing from the oldest
                 non_system_messages.remove(m)
             else:
                 running_token_count += token_count
 
-        # Reverse back and add system message to the beginning
         non_system_messages.reverse()
         all_messages = [{"role": "system", "content": self.system_prompt}] + non_system_messages
 
         try:
-            import openai
+            from openai import OpenAI
         except ModuleNotFoundError as exc:
-            raise ModuleNotFoundError(
-                "openai package is required for gpt_chat"
-            ) from exc
+            raise ModuleNotFoundError("openai package is required for gpt_chat") from exc
 
-        completion = openai.ChatCompletion.create(
+        client = OpenAI(api_key=self.api_key)
+        completion = client.chat.completions.create(
             model=model,
             messages=all_messages,
             max_tokens=max_tokens,
             functions=available_functions if available_functions else None,
-            api_key=self.api_key
         )
         bot_response = completion.choices[0].message
 
-        # Handle the response
-        if 'content' in bot_response and bot_response['content'] is not None:
-            confirmation_message = bot_response['content']
-        elif 'function_call' in bot_response:
-            func_name = bot_response['function_call']['name']
-            func_args = bot_response['function_call']['arguments']
+        if bot_response.content:
+            confirmation_message = bot_response.content
+        elif bot_response.function_call:
+            func_name = bot_response.function_call.name
+            func_args = bot_response.function_call.arguments
 
-            # JSON parsing of arguments if necessary
             if isinstance(func_args, str):
                 func_args = json.loads(func_args)
 
-            # Argument type conversion for dates
             for key in ['date', 'when', 'start', 'end']:
                 if key in func_args:
                     func_args[key] = datetime.datetime.fromisoformat(func_args[key])
 
-            # Dynamically calling the function
             if func_name in self.available_functions:
                 function_to_call = self.available_functions[func_name]
                 function_response = function_to_call(**func_args)
@@ -225,7 +214,7 @@ class EphemerEar:
             else:
                 confirmation_message = f"Function '{func_name}' is not available."
         else:
-            confirmation_message = "Received a response without 'content' or 'function_call'."
+            confirmation_message = "Received a response without content or function call."
 
         # Append to history, save, and handle notifications as before
         history.append({"role": "user", "content": message})

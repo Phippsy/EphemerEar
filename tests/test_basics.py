@@ -67,12 +67,27 @@ def test_load_yaml_to_dict_returns_correct_structure(tmp_path):
 
 def test_load_yaml_to_dict_raises_error_on_invalid_path(tmp_path):
     # Create a valid config file so that the EphemerEar instance initialises
-    yaml_content = "bot:\n  name: Test\n"
+    yaml_content = """
+bot:
+  name: TestBot
+  model: gpt-4o-mini
+  cache: tests
+  history_file: tests/history.json
+  system_prompt: tests/prompt.md
+  use_pushover: false
+  max_message_window: 2000
+user:
+  name: TestUser
+  user_details: tests/user_details.txt
+auth_tokens:
+  openai: "test-openai-token"
+stores:
+  responses: tests
+    """
     yaml_file = tmp_path / "config.yaml"
     yaml_file.write_text(yaml_content)
     ee = EphemerEar(str(yaml_file))
     with pytest.raises(FileNotFoundError):
         ee.load_yaml_to_dict("invalid_path.yaml")
         
-
 

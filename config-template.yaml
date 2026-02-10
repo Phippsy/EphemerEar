@@ -1,14 +1,15 @@
 bot:
   name: "DemoBot"
-  root_dir: "/Users/donalphipps/Documents/aiphoria/ephemerear"
+  root_dir: "/absolute/path/to/EphemerEar"
   history_file: "bots/demobot/memory/history.json"
   system_prompt: "bots/demobot/persona/system.txt"
-  max_message_window: 2000 # excludes system tokens
+  max_message_window: 2000
   cache: "bots/demobot/system/cache/"
-  stt_engine: "whisper" # only set to 'whisper' if your macbook has an M1 or above. set to 'openai' otherwise.
-  # model: Use "gpt-4-0125-preview" for the most sophisticated but expensive model
-  model: "gpt-3.5-turbo-0125"
-  use_pushover: true
+  stt_engine: "openai" # openai (recommended) or whisper (local)
+  stt_model: "gpt-4o-mini-transcribe" # used when stt_engine=openai
+  local_whisper_model: "base" # used when stt_engine=whisper
+  model: "gpt-4o-mini" # chat model
+  use_pushover: false
 user:
   name: "Your Name"
   user_details: "bots/demobot/user/user_details.txt"
@@ -16,12 +17,11 @@ auth_tokens:
   openai: "<your-openai-token>"
   pushover_key: "<your-pushover-key>"
   pushover_user: "<your-pushover-user-key>"
-# work-in-progress
 stores:
-  knowledge: "bots/demobot/memory/knowledge/" # not implemented
-  vision: "bots/demobot/input/vision/" # not implemented
+  knowledge: "bots/demobot/memory/knowledge/"
+  vision: "bots/demobot/input/vision/"
   responses: "bots/demobot/output/responses/"
   recordings: "bots/demobot/input/recordings/"
   transcripts: "bots/demobot/output/transcripts/"
-  notes: "bots/demobot/output/notes/" # not implemented
-  achievements: "bots/demobot/output/achievements/" # not implemented
+  notes: "bots/demobot/output/notes/"
+  achievements: "bots/demobot/output/achievements/"
